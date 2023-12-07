@@ -1,18 +1,23 @@
 <?php
 
+use App\Http\Controllers\EkspedisiController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::resource('ekspedisi', EkspedisiController::class);
+
+Route::get('inputExcel', function(){
+    return view('inputExcel');
+});
+
+Route::post('/generateExcel', [EkspedisiController::class, 'processExcelFiles'])->name('generate-excel');
+
+Route::post('/mergeExcel', [EkspedisiController::class, 'mapAndMergeHeaders'])->name('merge-excel'); 
+
+
+// Route::post('/generate', [EkspedisiController::class, 'processExcelFile']); 
