@@ -11,21 +11,28 @@
 </head>
 
 <body>
+    <center>
+        <form action="/barcodeForm" method="get">
+            <div class="form-group">
+                <label for="barcode">Barcode:</label>
+                <input type="text" class="form-control" id="barcode" name="barcode1">
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+    </center>
+
+
 
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
-                        <center><h3>form 1</h3></center>
-                        <form action="/barcodeForm" method="get">
-                            <div class="form-group">
-                                <label for="barcode">Barcode:</label>
-                                <input type="text" class="form-control" id="barcode" name="barcode1">
-                            </div>
-                            <button type="submit" class="btn btn-primary">Search</button>
-                        </form>
-                        
+                        <center>
+                            <h3>form 1</h3>
+                        </center>
+
                         <form action="/inputBarcode" method="POST">
 
                             <div class="form-check">
@@ -45,22 +52,26 @@
 
                             <div class="form-group">
                                 <label for="name">Name:</label>
-                                <input type="text" class="form-control" id="name"value="{{ $data['nama'] ?? '' }}">
+                                <input type="text" class="form-control"
+                                    id="name"value="{{ $data['nama'] ?? '' }}">
                             </div>
 
                             <div class="form-group">
                                 <label for="price">Price:</label>
-                                <input type="text" class="form-control" id="price" value="{{ $data['harga'] ?? '' }}">
+                                <input type="text" class="form-control" id="price"
+                                    value="{{ $data['harga'] ?? '' }}">
                             </div>
 
                             <div class="form-group">
                                 <label for="discount">Discount:</label>
-                                <input type="text" class="form-control" id="discount" name="discount" value="{{ $data['diskon'] ?? '' }}">
+                                <input type="text" class="form-control" id="discount" name="discount"
+                                    value="{{ $data['diskon'] ?? '' }}">
                             </div>
 
                             <div class="form-group">
                                 <label for="price_after_discount">Price after Discount:</label>
-                                <input type="text" class="form-control" id="price_after_discount" name="price_after_discount" >
+                                <input type="text" class="form-control" id="price_after_discount"
+                                    name="price_after_discount">
                             </div>
                             <button type="submit" class="btn btn-primary">Check</button>
                         </form>
@@ -71,50 +82,61 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
-                        <center><h3>form 2</h3></center>
-                        <form action="/barcodeForm" method="get">
-                            <div class="form-group">
-                                <label for="barcode">Barcode:</label>
-                                <input type="text" class="form-control" id="barcode" name="barcode2">
-                            </div>
-                            <button type="submit" class="btn btn-primary">Search</button>
-                        </form>
-                        
+                        <center>
+                            <h3>form 2</h3>
+                        </center>
+
+
                         <form action="/inputBarcode2" method="POST">
 
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="subkategori1" name="subkategori1">
-                                <label class="form-check-label" for="subkategori1">Sub Kategori 1 - Lolos.</label>
+                                <label class="form-check-label" for="subkategori1">Sub Kategori 1.</label>
                             </div>
 
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="subkategori2" name="subkategori2">
-                                <label class="form-check-label" for="subkategori2">Sub Kategori 2 - Rusak.</label>
+                                <label class="form-check-label" for="subkategori2">Sub Kategori 2.</label>
                             </div>
 
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="subkategori3" name="subkategori3">
+                                <input type="checkbox" class="form-check-input" id="lolos" name="lolos">
+                                <label class="form-check-label" for="lolos">Lolos.</label>
+                            </div>
+
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="rusak" name="rusak">
+                                <label class="form-check-label" for="rusak"> Rusak.</label>
+                            </div>
+
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="subkategori3"
+                                    name="subkategori3">
                                 <label class="form-check-label" for="subkategori3">Sub Kategori 3</label>
                             </div>
 
                             <div class="form-group">
                                 <label for="name">Name:</label>
-                                <input type="text" class="form-control" id="name"value="{{ $data1['nama'] ?? '' }}">
+                                <input type="text" class="form-control"
+                                    id="name"value="{{ $data1['nama'] ?? '' }}">
                             </div>
 
                             <div class="form-group">
                                 <label for="price">Price:</label>
-                                <input type="text" class="form-control" id="price" value="{{ $data1['harga'] ?? '' }}">
+                                <input type="text" class="form-control" id="price"
+                                    value="{{ $data1['harga'] ?? '' }}">
                             </div>
 
                             <div class="form-group">
                                 <label for="discount">Discount:</label>
-                                <input type="text" class="form-control" id="discount" name="discount" value="{{ $data['diskon'] ?? '' }}">
+                                <input type="text" class="form-control" id="discount" name="discount"
+                                    value="{{ $data['diskon'] ?? '' }}">
                             </div>
 
                             <div class="form-group">
                                 <label for="price_after_discount">Price after Discount:</label>
-                                <input type="text" class="form-control" id="price_after_discount" name="price_after_discount" >
+                                <input type="text" class="form-control" id="price_after_discount"
+                                    name="price_after_discount">
                             </div>
                             <button type="submit" class="btn btn-primary">Check</button>
                         </form>

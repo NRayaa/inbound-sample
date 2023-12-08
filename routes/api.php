@@ -21,6 +21,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::resource('ekspedisi', EkspedisiController::class );
-Route::post('/generateExcel', [EkspedisiController::class, 'processExcelFiles']);
-Route::post('/mergeExcel', [EkspedisiController::class, 'mapAndMergeHeaders']);
+Route::post('/generateExcel', [EkspedisiController::class, 'processExcelFiles'])->name('generate-excel');
+Route::post('/mergeExcel', [EkspedisiController::class, 'mapAndMergeHeaders'])->name('merge-excel'); 
 
