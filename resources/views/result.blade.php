@@ -19,12 +19,12 @@
         </tr>
         <!-- Data Rows -->
 
-        @foreach ($decodedResults as $result)
+        @foreach ($resultmerge as $result)
             <tr>
-                <td>{{ isset($result['no_resi']) ? implode(', ', $result['no_resi']) : 'N/A' }}</td>
-                <td>{{ isset($result['nama']) ? implode(', ', $result['nama']) : 'N/A' }}</td>
-                <td>{{ isset($result['qty']) ? implode(', ', $result['qty']) : 'N/A' }}</td>
-                <td>{{ isset($result['harga']) ? implode(', ', $result['harga']) : 'N/A' }}</td>
+                <td>{{ $result['no_resi']}} </td>
+                <td>{{ $result['nama'] }}</td>
+                <td>{{ $result['qty']}}</td>
+                <td>{{ $result['harga'] }}</td>
 
             </tr>
         @endforeach

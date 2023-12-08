@@ -21,12 +21,8 @@ class EkspedisiController extends Controller
     public function index()
     {
         $resultmerge = ResultFiter::all();
-        // Dekode data JSON untuk setiap record
-        $decodedResults = $resultmerge->map(function ($item) {
-            return json_decode($item->data, true);
-        });
 
-        return view('result', compact('decodedResults'));
+        return view('result', compact('resultmerge'));
     }
 
     /**
@@ -147,7 +143,7 @@ class EkspedisiController extends Controller
             $nama = $mergedData['nama'][$index] ?? null;
             $qty = $mergedData['qty'][$index] ?? null;
             $harga = $mergedData['harga'][$index] ?? null;
-    
+
             // Membuat entri baru
             $resultEntry = new ResultFiter([
                 'no_resi' => $noResi,
@@ -155,42 +151,29 @@ class EkspedisiController extends Controller
                 'qty' => $qty,
                 'harga' => $harga
             ]);
-    
+
             // Menyimpan entri ke database
             $resultEntry->save();
         }
 
-        // // Simpan data gabungan ke dataase
-        // $resultEntry = new ResultFiter([
-        //     'data' => json_encode($mergedData),
-        //     'created_at' => now(),
-        //     'updated_at' => now(),
-        // ]);
-
-        // try {
-        //     $resultEntry->save();
-        //     return new ResponseResource(true, "data berhasil di merge", null);
-        // } catch (\Exception $e) {
-        //     // Bisa juga menggunakan \Log::error($e->getMessage()); untuk mencatat error ke log
-        //     return response()->json(['error' => $e->getMessage()], 500);
-        // }
 
         return response()->json(['message' => 'Data has been merged and saved successfully.']);
     }
 
     public function barcode(Request $request)
     {
+        $data = collect();
+        $data1 = collect(); 
+        if ($request->has('barcode1') && !empty($request->barcode1)) {
+            $data = ResultFiter::where('no_resi', $request->barcode1)->latest()->first();
 
-        // Misalkan $search adalah nilai yang ingin dicari
-        $q = $request['11000495597'];
+        } elseif ($request->has('barcode2') && !empty($request->barcode2)) {
+            $data1 = ResultFiter::where('no_resi', $request->barcode2)->latest()->first();
 
-        // Query untuk mencari record
-        $results = DB::table('nama_tabel')
-            ->whereJsonContains('data->no_resi', $q)
-            ->get();
-        
-        return $results;
+        }
+        return view('formBarcode', ['data' => $data, 'data1' => $data1]); // Kembalikan kedua set data ke view
+
+    
     }
+    
 }
-
-
