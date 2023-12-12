@@ -15,7 +15,7 @@
         <form action="/barcodeForm" method="get">
             <div class="form-group">
                 <label for="barcode">Barcode:</label>
-                <input type="text" class="form-control" id="barcode" name="barcode1">
+                <input type="text" class="form-control" id="barcode" name="barcode">
             </div>
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
@@ -37,18 +37,19 @@
 
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="subkategori1" name="subkategori1">
-                                <label class="form-check-label" for="subkategori1">Sub Kategori 1 - Lolos.</label>
+                                <label class="form-check-label" for="subkategori1">Sub Kategori 1 </label>
                             </div>
 
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="subkategori2" name="subkategori2">
-                                <label class="form-check-label" for="subkategori2">Sub Kategori 2 - Rusak.</label>
+                                <input type="checkbox" class="form-check-input" id="lolos1" name="lolos1">
+                                <label class="form-check-label" for="lolos1">Lolos.</label>
                             </div>
 
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="subkategori3" name="subkategori3">
-                                <label class="form-check-label" for="subkategori3">Sub Kategori 3</label>
+                                <input type="checkbox" class="form-check-input" id="rusak1" name="rusak1">
+                                <label class="form-check-label" for="rusak1"> Rusak.</label>
                             </div>
+
 
                             <div class="form-group">
                                 <label for="name">Name:</label>
@@ -60,6 +61,11 @@
                                 <label for="price">Price:</label>
                                 <input type="text" class="form-control" id="price"
                                     value="{{ $data['harga'] ?? '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="sub_kategory1">sub_kategory1:</label>
+                                <input type="text" class="form-control" id="sub_kategory1"
+                                    value="{{ $data['sub_kategory1'] ?? '' }}">
                             </div>
 
                             <div class="form-group">
@@ -73,7 +79,7 @@
                                 <input type="text" class="form-control" id="price_after_discount"
                                     name="price_after_discount">
                             </div>
-                            <button type="submit" class="btn btn-primary">Check</button>
+                            <button type="submit" class="btn btn-primary">Input</button>
                         </form>
                     </div>
                 </div>
@@ -95,24 +101,23 @@
                             </div>
 
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="subkategori2" name="subkategori2">
-                                <label class="form-check-label" for="subkategori2">Sub Kategori 2.</label>
+                                <input type="checkbox" class="form-check-input" id="tag_warna1" name="tag_warna1">
+                                <label class="form-check-label" for="tag_warna1">Warna 1</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="tag_warna2" name="tag_warna2">
+                                <label class="form-check-label" for="tag_warna2">Warna 2</label>
+                            </div>
+
+
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="lolos2" name="lolos2">
+                                <label class="form-check-label" for="lolos2">Lolos.</label>
                             </div>
 
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="lolos" name="lolos">
-                                <label class="form-check-label" for="lolos">Lolos.</label>
-                            </div>
-
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="rusak" name="rusak">
-                                <label class="form-check-label" for="rusak"> Rusak.</label>
-                            </div>
-
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="subkategori3"
-                                    name="subkategori3">
-                                <label class="form-check-label" for="subkategori3">Sub Kategori 3</label>
+                                <input type="checkbox" class="form-check-input" id="rusak2" name="rusak2">
+                                <label class="form-check-label" for="rusak2"> Rusak.</label>
                             </div>
 
                             <div class="form-group">
@@ -127,16 +132,12 @@
                                     value="{{ $data1['harga'] ?? '' }}">
                             </div>
 
-                            <div class="form-group">
-                                <label for="discount">Discount:</label>
-                                <input type="text" class="form-control" id="discount" name="discount"
-                                    value="{{ $data['diskon'] ?? '' }}">
-                            </div>
+                           
 
                             <div class="form-group">
-                                <label for="price_after_discount">Price after Discount:</label>
-                                <input type="text" class="form-control" id="price_after_discount"
-                                    name="price_after_discount">
+                                <label for="sub_kategory2">sub kategory</label>
+                                <input type="text" class="form-control" id="sub_kategory2"
+                                    name="sub_kategory2">
                             </div>
                             <button type="submit" class="btn btn-primary">Check</button>
                         </form>
@@ -146,10 +147,56 @@
 
         </div>
     </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxLolos1 = document.getElementById('lolos1');
+            const checkboxRusak1 = document.getElementById('rusak1');
+            const checkboxLolos2 = document.getElementById('lolos2');
+            const checkboxRusak2 = document.getElementById('rusak2');
+            const tagWarna1 = document.getElementById('tag_warna1');
+            const tagWarna2 = document.getElementById('tag_warna2');
+    
+            checkboxLolos1.addEventListener('change', function () {
+                if (this.checked) {
+                    checkboxRusak1.checked = false;
+                }
+            });
+    
+            checkboxRusak1.addEventListener('change', function () {
+                if (this.checked) {
+                    checkboxLolos1.checked = false;
+                }
+            });
+            checkboxLolos2.addEventListener('change', function () {
+                if (this.checked) {
+                    checkboxRusak2.checked = false;
+                }
+            });
+    
+            checkboxRusak2.addEventListener('change', function () {
+                if (this.checked) {
+                    checkboxLolos2.checked = false;
+                }
+            });
+            tagWarna1.addEventListener('change', function () {
+                if (this.checked) {
+                    tagWarna1.checked = false;
+                }
+            });
+            tagWarna2.addEventListener('change', function () {
+                if (this.checked) {
+                    tagWarna2.checked = false;
+                }
+            });
+        });
+    </script>
 
     <!-- Include Bootstrap JS and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    
 
 </body>
 

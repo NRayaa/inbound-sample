@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ekspedisi;
+use Log;
 // use Illuminate\Support\Facades\DB;
+use App\Models\Ekspedisi;
+use App\Models\ResultFilter;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Http\Resources\ResponseResource;
-use App\Models\ResultFiter;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\Reader\Exception as ReaderException;
 
@@ -20,13 +21,13 @@ class EkspedisiController extends Controller
 
     public function index()
     {
-        $resultmerge = ResultFiter::all();
+        $resultmerge = ResultFilter::all();
 
         //view
-        // return view('result', compact('resultmerge'));
+        return view('result', compact('resultmerge'));
 
         //api
-        return new ResponseResource(true, "list data merge", $resultmerge);
+        // return new ResponseResource(true, "list data merge", $resultmerge);
     }
 
     /**
@@ -92,30 +93,32 @@ class EkspedisiController extends Controller
                 return back()->with('error', 'Error processing file: ' . $e->getMessage());
             }
         }
-        // return response()->view('excelData', ['headers' => $headers, 'templateHeaders' => $templateHeaders]);
-        
-        return new ResponseResource(true, "berhasil", ['headers' => $headers,  'templateHeaders' =>$templateHeaders]);
+
+        return response()->view('excelData', ['headers' => $headers, 'templateHeaders' => $templateHeaders]);
+
+        // return new ResponseResource(true, "berhasil", ['headers' => $headers,  'templateHeaders' =>$templateHeaders]);
     }
 
     public function mapAndMergeHeaders(Request $request)
     {
         // Validasi input request
-        // $validator = Validator::make($request->all(), [
-        //     'headerMappings' => 'required|array',
-        // ]);
+        $validator = Validator::make($request->all(), [
+            'headerMappings' => 'required|array',
+        ]);
 
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => $validator->errors()], 422);
-        // }
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-        // $headerMappings = $request->input('headerMappings');
+        $headerMappings = $request->input('headerMappings');
 
-        $headerMappings = [
-            'no_resi' => ['AWB'],
-            'nama' => ['Desc'],
-            'qty' => ['NO'],
-            'harga' => ['Value']
-        ];
+        //contoh untuk nanti di api aja
+        // $headerMappings = [
+        //     'no_resi' => ['AWB'],
+        //     'nama' => ['Desc'],
+        //     'qty' => ['NO'],
+        //     'harga' => ['Value']
+        // ];
 
 
         $mergedData = [
@@ -148,7 +151,7 @@ class EkspedisiController extends Controller
             $qty = $mergedData['qty'][$index] ?? null;
             $harga = $mergedData['harga'][$index] ?? null;
 
-            $resultEntry = new ResultFiter([
+            $resultEntry = new ResultFilter([
                 'no_resi' => $noResi,
                 'nama' => $nama,
                 'qty' => $qty,
@@ -168,18 +171,20 @@ class EkspedisiController extends Controller
     {
         $data = collect();
         $data1 = collect(); 
-        if ($request->has('barcode1') && !empty($request->barcode1)) {
-            $exec = ResultFiter::where('no_resi', $request->barcode1)->latest()->first();
-            if($exec['harga'] < 100000) {
+        if ($request->has('barcode') && !empty($request->barcode)) {
+            $exec = ResultFilter::where('no_resi', $request->barcode)->latest()->first();
+            if($exec['harga'] > 100000) {
                 $data = $exec;
             }else {
                 $data1 = $exec;
             }
         }
+        session(["barcodeData" => ['data' => $data, 'data1' => $data1]]);
+        
+
         return new ResponseResource(true, "data", [$data, $data1]); 
         // return view('formBarcode', ['data' => $data, 'data1' => $data1]); // Kembalikan kedua set data ke view
-
-    
+        
     }
     
 }
