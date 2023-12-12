@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DiskonController;
 use App\Http\Controllers\EkspedisiController;
 use App\Models\Ekspedisi;
 use Illuminate\Http\Request;
@@ -21,6 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::resource('ekspedisi', EkspedisiController::class );
-Route::post('/generateExcel', [EkspedisiController::class, 'processExcelFiles']);
-Route::post('/mergeExcel', [EkspedisiController::class, 'mapAndMergeHeaders']);
+Route::post('/generateExcel', [EkspedisiController::class, 'processExcelFiles'])->name('generate-excel');
+Route::post('/mergeExcel', [EkspedisiController::class, 'mapAndMergeHeaders'])->name('merge-excel'); 
+Route::resource('/diskons', DiskonController::class); 
+Route::get('/barcodeForm',  [EkspedisiController::class, 'barcode']);
 

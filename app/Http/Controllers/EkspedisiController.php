@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Log;
+// use Illuminate\Support\Facades\DB;
 use App\Models\Ekspedisi;
-use Illuminate\Support\Facades\DB;
+use App\Models\ResultFilter;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Http\Resources\ResponseResource;
-use App\Models\ResultFiter;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\Reader\Exception as ReaderException;
 
@@ -20,13 +21,13 @@ class EkspedisiController extends Controller
 
     public function index()
     {
-        $resultmerge = ResultFiter::all();
-        // Dekode data JSON untuk setiap record
-        $decodedResults = $resultmerge->map(function ($item) {
-            return json_decode($item->data, true);
-        });
+        $resultmerge = ResultFilter::all();
 
-        return view('result', compact('decodedResults'));
+        //view
+        return view('result', compact('resultmerge'));
+
+        //api
+        // return new ResponseResource(true, "list data merge", $resultmerge);
     }
 
     /**
@@ -37,7 +38,7 @@ class EkspedisiController extends Controller
         return view('inputExcel');
     }
 
-    public function processExcelFiles(Request $request): Response
+    public function processExcelFiles(Request $request)
     {
         $request->validate([
             'files.*' => 'required|file|mimes:xlsx,xls'
@@ -51,27 +52,24 @@ class EkspedisiController extends Controller
             $filePath = $file->getPathname();
             $fileName = $file->getClientOriginalName();
 
-            $header = []; // Reset header di sini
+            $header = []; 
 
             try {
                 $spreadsheet = IOFactory::load($filePath);
                 $sheet = $spreadsheet->getActiveSheet();
 
-                // Membaca header
                 foreach ($sheet->getRowIterator(1, 1) as $row) {
                     $cellIterator = $row->getCellIterator();
                     $cellIterator->setIterateOnlyExistingCells(false);
 
                     foreach ($cellIterator as $cell) {
                         $value = $cell->getValue();
-                        // Tambahkan hanya jika value bukan null dan bukan string kosong
                         if (!is_null($value) && $value !== '') {
                             $header[] = $value;
                         }
                     }
                 }
 
-                // Menyimpan header dengan nama file
                 $headers[$fileName] = $header;
 
                 foreach ($sheet->getRowIterator(2) as $row) {
@@ -81,13 +79,11 @@ class EkspedisiController extends Controller
 
                     foreach ($cellIterator as $cell) {
                         $value = $cell->getValue();
-                        // Tambahkan nilai ke rowData hanya jika tidak null
                         if (!is_null($value)) {
                             $rowData[] = $value;
                         }
                     }
 
-                    // Pastikan jumlah elemen sama sebelum menggunakan array_combine
                     if (count($header) == count($rowData)) {
                         $jsonRowData = json_encode(array_combine($header, $rowData));
                         Ekspedisi::create(['data' => $jsonRowData]);
@@ -97,8 +93,10 @@ class EkspedisiController extends Controller
                 return back()->with('error', 'Error processing file: ' . $e->getMessage());
             }
         }
+
         return response()->view('excelData', ['headers' => $headers, 'templateHeaders' => $templateHeaders]);
-        // return new ResponseResource(true, "berhasil", $headers);
+
+        // return new ResponseResource(true, "berhasil", ['headers' => $headers,  'templateHeaders' =>$templateHeaders]);
     }
 
     public function mapAndMergeHeaders(Request $request)
@@ -112,10 +110,17 @@ class EkspedisiController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Pemetaan header yang diberikan oleh pengguna
         $headerMappings = $request->input('headerMappings');
 
-        // Inisialisasi array untuk hasil akhir
+        //contoh untuk nanti di api aja
+        // $headerMappings = [
+        //     'no_resi' => ['AWB'],
+        //     'nama' => ['Desc'],
+        //     'qty' => ['NO'],
+        //     'harga' => ['Value']
+        // ];
+
+
         $mergedData = [
             'no_resi' => [],
             'nama' => [],
@@ -124,14 +129,12 @@ class EkspedisiController extends Controller
         ];
 
 
-        // Ambil semua data dari tabel ekspedisis
         $ekspedisiData = Ekspedisi::all()->map(function ($item) {
             return json_decode($item->data, true);
         });
 
         // dd($ekspedisiData);
 
-        // Looping melalui setiap header yang dipilih pengguna dan ekstrak data
         foreach ($headerMappings as $templateHeader => $selectedHeaders) {
             foreach ($selectedHeaders as $userSelectedHeader) {
                 // Kumpulkan nilai untuk header yang dipilih dari semua baris ekspedisi
@@ -147,50 +150,41 @@ class EkspedisiController extends Controller
             $nama = $mergedData['nama'][$index] ?? null;
             $qty = $mergedData['qty'][$index] ?? null;
             $harga = $mergedData['harga'][$index] ?? null;
-    
-            // Membuat entri baru
-            $resultEntry = new ResultFiter([
+
+            $resultEntry = new ResultFilter([
                 'no_resi' => $noResi,
                 'nama' => $nama,
                 'qty' => $qty,
                 'harga' => $harga
             ]);
-    
-            // Menyimpan entri ke database
             $resultEntry->save();
         }
 
-        // // Simpan data gabungan ke dataase
-        // $resultEntry = new ResultFiter([
-        //     'data' => json_encode($mergedData),
-        //     'created_at' => now(),
-        //     'updated_at' => now(),
-        // ]);
-
-        // try {
-        //     $resultEntry->save();
-        //     return new ResponseResource(true, "data berhasil di merge", null);
-        // } catch (\Exception $e) {
-        //     // Bisa juga menggunakan \Log::error($e->getMessage()); untuk mencatat error ke log
-        //     return response()->json(['error' => $e->getMessage()], 500);
-        // }
-
+        //view
         return response()->json(['message' => 'Data has been merged and saved successfully.']);
+
+        //api
+        // return new ResponseResource(true, "berhasil menggabungkan data", $resultEntry);
     }
 
     public function barcode(Request $request)
     {
-
-        // Misalkan $search adalah nilai yang ingin dicari
-        $q = $request['11000495597'];
-
-        // Query untuk mencari record
-        $results = DB::table('nama_tabel')
-            ->whereJsonContains('data->no_resi', $q)
-            ->get();
+        $data = collect();
+        $data1 = collect(); 
+        if ($request->has('barcode') && !empty($request->barcode)) {
+            $exec = ResultFilter::where('no_resi', $request->barcode)->latest()->first();
+            if($exec['harga'] > 100000) {
+                $data = $exec;
+            }else {
+                $data1 = $exec;
+            }
+        }
+        session(["barcodeData" => ['data' => $data, 'data1' => $data1]]);
         
-        return $results;
+
+        return new ResponseResource(true, "data", [$data, $data1]); 
+        // return view('formBarcode', ['data' => $data, 'data1' => $data1]); // Kembalikan kedua set data ke view
+        
     }
+    
 }
-
-

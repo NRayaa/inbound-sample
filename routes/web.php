@@ -19,5 +19,7 @@ Route::post('/generateExcel', [EkspedisiController::class, 'processExcelFiles'])
 
 Route::post('/mergeExcel', [EkspedisiController::class, 'mapAndMergeHeaders'])->name('merge-excel'); 
 
+Route::get('/barcodeForm',  [EkspedisiController::class, 'barcode']);
+
 
 // Route::post('/generate', [EkspedisiController::class, 'processExcelFile']); 

@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('result_fiters', function (Blueprint $table) {
+        Schema::create('up100ks', function (Blueprint $table) {
             $table->id();
-            // $table->json('data');
-            $table->string('no_resi');
-            $table->string('nama');
+            $table->foreignId('diskon_id')->constrained('diskons');
+            $table->string('no_resi_lama');
+            $table->string('no_resi_baru')->unique();
             $table->integer('qty');
-            $table->integer('harga');
+            $table->string('nama_barang');
+            $table->decimal('harga_lama', 10, 2);
+            $table->decimal('harga_baru', 10, 2);
+            $table->boolean('kualitas_check');
             $table->timestamps();
         });
     }
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('result_fiters');
+        Schema::dropIfExists('up100ks');
     }
 };
