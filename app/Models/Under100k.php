@@ -9,4 +9,8 @@ class Under100k extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
+
+    public function diskon(){
+        return $this->belongsTo(Diskon::class, 'diskon_id');
+    }
 }

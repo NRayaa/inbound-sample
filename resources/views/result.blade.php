@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    <h3>total = {{ $total }}</h3>
     <table border="1">
         <!-- Header Row -->
         <tr>

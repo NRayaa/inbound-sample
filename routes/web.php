@@ -1,9 +1,11 @@
 <?php
 
-use App\Http\Controllers\EkspedisiController;
+use App\Models\Up100k;
 use Illuminate\Support\Facades\Route;
-
-
+use App\Http\Controllers\Up100kController;
+use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\EkspedisiController;
+use App\Http\Controllers\Under100kController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,7 +21,10 @@ Route::post('/generateExcel', [EkspedisiController::class, 'processExcelFiles'])
 
 Route::post('/mergeExcel', [EkspedisiController::class, 'mapAndMergeHeaders'])->name('merge-excel'); 
 
-Route::get('/barcodeForm',  [EkspedisiController::class, 'barcode']);
+Route::get('/barcodeForm',  [EkspedisiController::class, 'barcode']);//ini controller view untuk form
+Route::resource('/under100k',  Under100kController::class,); //ini controller untuk post menyimpan data dari view
+Route::resource('/up100k',  Up100kController::class);
+Route::get('/reports', [ReportsController::class, 'index']);
 
 
 // Route::post('/generate', [EkspedisiController::class, 'processExcelFile']); 
