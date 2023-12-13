@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Log;
-// use Illuminate\Support\Facades\DB;
 use App\Models\Ekspedisi;
+// use Illuminate\Support\Facades\DB;
 use App\Models\ResultFilter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Http\Resources\ResponseResource;
 use Illuminate\Support\Facades\Validator;
@@ -16,23 +16,18 @@ use PhpOffice\PhpSpreadsheet\Reader\Exception as ReaderException;
 
 class EkspedisiController extends Controller
 {
-
-
-
     public function index()
     {
         $resultmerge = ResultFilter::all();
-
+        $total = $resultmerge->count();
         //view
-        return view('result', compact('resultmerge'));
+        return view('result', compact(['total','resultmerge']));
 
-        //api
-        // return new ResponseResource(true, "list data merge", $resultmerge);
+        // api
+        // return new ResponseResource(true, "list data merge", ["total" => $total, "data" => $resultmerge]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+   
     public function create()
     {
         return view('inputExcel');
@@ -171,20 +166,27 @@ class EkspedisiController extends Controller
     {
         $data = collect();
         $data1 = collect(); 
+    
         if ($request->has('barcode') && !empty($request->barcode)) {
             $exec = ResultFilter::where('no_resi', $request->barcode)->latest()->first();
-            if($exec['harga'] > 100000) {
-                $data = $exec;
-            }else {
-                $data1 = $exec;
+    
+            if ($exec !== null) {
+                if ($exec->harga > 100000) {
+                    $data = $exec;
+                } else {
+                    $data1 = $exec;
+                }
+            } else {
+                // Tambahkan pesan atau tindakan yang sesuai ketika data kosong
+                return view('formBarcode', ['message' => 'Data tidak ditemukan.']);
             }
         }
+    
         session(["barcodeData" => ['data' => $data, 'data1' => $data1]]);
-        
-
-        return new ResponseResource(true, "data", [$data, $data1]); 
-        // return view('formBarcode', ['data' => $data, 'data1' => $data1]); // Kembalikan kedua set data ke view
-        
+        Log::info('Nilai session barcodeData:', ['barcodeData' => session('barcodeData')]);
+    
+        return view('formBarcode', ['data' => $data, 'data1' => $data1]);
     }
+    
     
 }

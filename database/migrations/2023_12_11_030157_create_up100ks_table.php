@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('nama_barang');
             $table->decimal('harga_lama', 10, 2);
             $table->decimal('harga_baru', 10, 2);
-            $table->boolean('kualitas_check');
+            $table->enum('kualitas_check', ['lolos', 'rusak', 'discrepancy', 'abnormal', 'tk']);
             $table->timestamps();
         });
     }
